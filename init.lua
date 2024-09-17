@@ -216,7 +216,9 @@ if not vim.uv.fs_stat(lazypath) then
   end
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
-
+vim.keymap.set('n', '<Leader>du', function()
+  require('dapui').toggle()
+end, { noremap = true, silent = true })
 -- [[ Configure and install plugins ]]
 --
 --  To check the current status of your plugins, run
@@ -905,7 +907,86 @@ require('lazy').setup({
       --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     end,
   },
+  {
+    'nvim-neotest/nvim-nio',
+  },
+  {
+    'mfussenegger/nvim-dap',
+    config = function()
+      local dap = require 'dap'
 
+      -- Keybindings for nvim-dap
+      local opts = { noremap = true, silent = true }
+
+      vim.keymap.set('n', '<F5>', function()
+        dap.continue()
+      end, opts)
+      vim.keymap.set('n', '<F10>', function()
+        dap.step_over()
+      end, opts)
+      vim.keymap.set('n', '<F11>', function()
+        dap.step_into()
+      end, opts)
+      vim.keymap.set('n', '<F12>', function()
+        dap.step_out()
+      end, opts)
+      vim.keymap.set('n', '<Leader>b', function()
+        dap.toggle_breakpoint()
+      end, opts)
+      vim.keymap.set('n', '<Leader>B', function()
+        dap.set_breakpoint(vim.fn.input 'Breakpoint condition: ')
+      end, opts)
+      vim.keymap.set('n', '<Leader>lp', function()
+        dap.set_breakpoint(nil, nil, vim.fn.input 'Log point message: ')
+      end, opts)
+      vim.keymap.set('n', '<Leader>dr', function()
+        dap.repl.open()
+      end, opts)
+      vim.keymap.set('n', '<Leader>dl', function()
+        dap.run_last()
+      end, opts)
+    end,
+  },
+  {
+    'rcarriga/nvim-dap-ui',
+    dependencies = {
+      'mfussenegger/nvim-dap',
+      'nvim-neotest/nvim-nio', -- Add nvim-nio as a dependency
+    },
+    config = function()
+      require('dapui').setup()
+
+      local dap = require 'dap'
+      local dapui = require 'dapui'
+
+      dap.listeners.after.event_initialized['dapui_config'] = function()
+        dapui.open()
+      end
+      dap.listeners.before.event_terminated['dapui_config'] = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited['dapui_config'] = function()
+        dapui.close()
+      end
+    end,
+  },
+
+  -- nvim-dap-virtual-text for inline variable display
+  {
+    'theHamsta/nvim-dap-virtual-text',
+    dependencies = { 'mfussenegger/nvim-dap' },
+    config = function()
+      require('nvim-dap-virtual-text').setup()
+    end,
+  },
+  -- nvim-dap-go for Go debugging
+  {
+    'leoluz/nvim-dap-go',
+    dependencies = { 'mfussenegger/nvim-dap' },
+    config = function()
+      require('dap-go').setup()
+    end,
+  },
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
