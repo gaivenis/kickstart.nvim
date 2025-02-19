@@ -142,6 +142,10 @@ vim.opt.timeoutlen = 300
 vim.opt.splitright = true
 vim.opt.splitbelow = true
 
+vim.opt.expandtab = true -- Use spaces instead of tabs.
+vim.opt.shiftwidth = 4 -- Number of spaces per indentation level (shift).
+vim.opt.tabstop = 4 -- Number of spaces that a <Tab> character *looks like*.
+vim.opt.softtabstop = 4 -- Number of spaces inserted/deleted with <Tab>/<BS>.
 -- Sets how neovim will display certain whitespace characters in the editor.
 --  See `:help 'list'`
 --  and `:help 'listchars'`
@@ -232,7 +236,7 @@ end, { noremap = true, silent = true })
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-  'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
+  -- 'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
